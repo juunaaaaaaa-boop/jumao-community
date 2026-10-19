@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Jumao Community, ruang berbagi dan berdiskusi.">
+  <title>Jumao Community</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --text: #20232a;
+      --muted: #777e8b;
+      --line: #e9ebef;
+      --accent: #247a58;
+      --soft: #e9f5ee;
+      --danger: #d84b57;
+      --shadow: 0 4px 18px #1d263008;
+    }
+    body.dark {
+      --bg: #151719;
+      --surface: #202326;
+      --text: #f1f3f5;
+      --muted: #a2a9b3;
+      --line: #35393e;
+      --accent: #78d4a4;
+      --soft: #293e33;
+      --danger: #ff7a83;
+      --shadow: 0 4px 18px #0002;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      padding-bottom: 82px;
+    }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo {
+      width: 38px; height: 38px; border-radius: 13px;
+      display: grid; place-items: center;
+      color: white; background: #247a58;
+      font-weight: 850; font-size: 20px;
+    }
+    .brand h1 { margin: 0; font-size: 18px; letter-spacing: -.5px; }
+    .sub { font-size: 11px; color: var(--muted); }
+    .iconbtn {
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--text); border-radius: 12px;
+      width: 39px; height: 39px;
+    }
+    main { width: min(100% - 24px, 680px); margin: 18px auto; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .welcome {
+      padding: 20px; border-radius: 20px;
+      background: var(--soft); margin-bottom: 15px;
+    }
+    .welcome h2 { font-size: 22px; margin: 0 0 5px; }
+    .welcome p { margin: 0; color: var(--muted); }
+    .card {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 17px; padding: 16px;
+      margin-bottom: 13px; box-shadow: var(--shadow);
+    }
+    .section-title {
+      font-size: 16px; font-weight: 750;
+      margin: 0 0 12px;
+    }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .between { justify-content: space-between; }
+    .avatar {
+      width: 42px; height: 42px; flex: 0 0 42px;
+      border-radius: 50%; background: var(--soft);
+      color: var(--accent); display: grid; place-items: center;
+      font-weight: 800; font-size: 17px;
+    }
+    .grow { flex: 1; min-width: 0; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .field {
+      display: block; width: 100%; padding: 12px;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: var(--bg); color: var(--text);
+      margin-top: 8px;
+    }
+    textarea.field { resize: vertical; min-height: 100px; }
+    .btn {
+      border: 0; border-radius: 12px; padding: 10px 15px;
+      background: var(--accent); color: white; font-weight: 700;
+    }
+    .btn.secondary {
+      background: var(--soft); color: var(--accent);
+    }
+    .btn.ghost {
+      background: transparent; border: 1px solid var(--line);
+      color: var(--text);
+    }
+    .btn.danger { background: #fff0f0; color: var(--danger); }
+    .wide { width: 100%; }
+    .search { margin: 0 0 14px; }
+    .post-head { display: flex; gap: 10px; align-items: center; }
+    .post-text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 16px 0; }
+    .post-actions {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding-top: 12px; border-top: 1px solid var(--line);
+    }
+    .action {
+      background: transparent; border: 1px solid var(--line);
+      border-radius: 10px; padding: 7px 10px;
+      color: var(--muted);
+    }
+    .action.selected { color: var(--accent); background: var(--soft); }
+    .comments {
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .comment { margin: 10px 0; overflow-wrap: anywhere; }
+    .comment-form { display: flex; gap: 8px; margin-top: 10px; }
+    .comment-form input { min-width: 0; flex: 1; }
+    .bottomnav {
+      position: fixed; z-index: 10; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-around;
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+      background: var(--surface); border-top: 1px solid var(--line);
+    }
+    .navbtn {
+      flex: 1; border: 0; background: transparent;
+      color: var(--muted); padding: 5px 0; font-size: 11px;
+    }
+    .navbtn span { display: block; font-size: 20px; margin-bottom: 2px; }
+    .navbtn.active { color: var(--accent); font-weight: 800; }
+    .empty { padding: 25px 8px; text-align: center; color: var(--muted); }
+    .stat {
+      background: var(--bg); border-radius: 13px;
+      padding: 13px; text-align: center; flex: 1;
+    }
+    .stat strong { display: block; font-size: 20px; }
+    .notice { color: var(--muted); font-size: 12px; margin-top: 10px; }
+    .hidden { display: none !important; }
+    .tag {
+      display: inline-block; border-radius: 20px;
+      background: var(--soft); color: var(--accent);
+      padding: 4px 9px; font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">J</div>
+      <div>
+        <h1>jumao<span style="color:var(--accent)">.</span></h1>
+        <div class="sub">COMMUNITY SPACE</div>
+      </div>
+    </div>
+    <button class="iconbtn" id="themeBtn" aria-label="Ganti tema">☾</button>
+  </header>
+
+  <main>
+    <section class="page active" id="home">
+      <div class="welcome">
+        <span class="tag">YOUR SPACE, YOUR VOICE</span>
+        <h2>Halo, <span id="helloName">Teman</span> 👋</h2>
+        <p>Satu tempat untuk berbagi ide, cerita, dan inspirasi.</p>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="avatar" id="composeAvatar">T</div>
+          <div class="grow">
+            <strong id="composeName">Teman</strong>
+            <div class="muted">Apa yang ingin kamu bagikan?</div>
+          </div>
+        </div>
+        <textarea class="field" id="postInput" maxlength="2000"
+          placeholder="Tulis sesuatu untuk komunitas..."></textarea>
+        <div class="row between" style="margin-top:10px">
+          <span class="muted"><span id="charCount">0</span>/2000</span>
+          <button class="btn" id="publishBtn">＋ Publikasikan</button>
+        </div>
+      </div>
+
+      <input class="field search" id="searchInput"
+        placeholder="⌕ Cari postingan atau nama...">
+
+      <div class="row between" style="margin:16px 2px 10px">
+        <h3 class="section-title" style="margin:0">Linimasa</h3>
+        <span class="muted" id="postCount">0 postingan</span>
+      </div>
+      <div id="feed"></div>
+    </section>
+
+    <section class="page" id="saved">
+      <div class="card">
+        <h2 class="section-title">Postingan tersimpan 🔖</h2>
+        <p class="muted">Kumpulan postingan yang kamu simpan.</p>
+      </div>
+      <div id="savedFeed"></div>
+    </section>
+
+    <section class="page" id="profile">
+      <div class="card">
+        <div class="row">
+          <div class="avatar" id="profileAvatar" style="width:58px;height:58px;flex-basis:58px;font-size:23px">T</div>
+          <div class="grow">
+            <h2 id="profileName" style="margin:0">Teman</h2>
+            <div class="muted">@anggota-jumao</div>
+            <span class="tag">Anggota komunitas</span>
+          </div>
+        </div>
+        <div class="row" style="margin-top:18px">
+          <div class="stat"><strong id="myPosts">0</strong><span class="muted">Postingan</span></div>
+          <div class="stat"><strong id="myLikes">0</strong><span class="muted">Like diterima</span></div>
+          <div class="stat"><strong id="mySaved">0</strong><span class="muted">Tersimpan</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Identitas kamu</h3>
+        <label for="nameInput">Nama tampilan</label>
+        <input class="field" id="nameInput" maxlength="30" placeholder="Masukkan nama">
+        <button class="btn wide" id="saveNameBtn" style="margin-top:12px">Simpan nama</button>
+        <p class="notice">Nama ini disimpan hanya di perangkatmu. Ini belum merupakan akun online.</p>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Pengaturan</h3>
+        <button class="btn ghost wide" id="installBtn">＋ Pasang aplikasi</button>
+        <p class="notice" id="installHelp">Kamu juga bisa memasang lewat menu browser Chrome.</p>
+        <button class="btn ghost wide" id="exportBtn" style="margin-top:10px">Unduh cadangan data</button>
+        <button class="btn danger wide" id="resetBtn" style="margin-top:10px">Hapus seluruh data lokal</button>
+      </div>
+    </section>
+
+    <section class="page" id="about">
+      <div class="card">
+        <div class="logo" style="margin-bottom:15px">J</div>
+        <h2 class="section-title">Tentang Jumao Community</h2>
+        <p>Jumao adalah ruang sederhana untuk menyampaikan ide, berdiskusi, dan menyimpan inspirasi.</p>
+        <p class="muted">Versi 1.0.0 · PWA · Dibuat untuk komunitas.</p>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Panduan komunitas</h3>
+        <p>• Hargai pendapat orang lain.</p>
+        <p>• Hindari membagikan data pribadi.</p>
+        <p>• Pikirkan kembali sebelum memublikasikan sesuatu.</p>
+        <p>• Gunakan tombol hapus untuk menghapus postingan buatanmu di perangkat ini.</p>
+      </div>
+      <div class="card">
+        <h3 class="section-title">Status aplikasi</h3>
+        <p id="networkStatus">Memeriksa koneksi...</p>
+        <p id="cacheStatus" class="muted">Memeriksa dukungan offline...</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottomnav" aria-label="Navigasi utama">
+    <button class="navbtn active" data-page="home"><span>⌂</span>Beranda</button>
+    <button class="navbtn" data-page="saved"><span>♡</span>Tersimpan</button>
+    <button class="navbtn" data-page="profile"><span>◉</span>Profil</button>
+    <button class="navbtn" data-page="about"><span>☷</span>Tentang</button>
+  </nav>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const KEY = "jumao-community-v1";
+    const defaults = {
+      name: "Teman",
+      dark: false,
+      posts: [
+        {
+          id: "welcome-1",
+          author: "Jumao",
+          text: "Selamat datang di Jumao Community! 🌱\n\nIni adalah ruang untuk berbagi ide, cerita, dan inspirasi. Coba buat postingan pertamamu di atas.",
+          time: Date.now(),
+          likes: [],
+          saved: false,
+          comments: []
+        }
+      ]
+    };
+    let state = loadState();
+    let pendingInstall = null;
+    let openComments = new Set();
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY));
+        if (saved && Array.isArray(saved.posts) && typeof saved.name === "string") {
+          return { ...defaults, ...saved };
+        }
+      } catch (e) {}
+      return structuredClone(defaults);
+    }
+
+    function persist() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(state));
+      } catch (e) {
+        alert("Penyimpanan penuh. Hapus sebagian data atau unduh cadangan.");
+      }
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    function initials(name) {
+      return [...(name.trim() || "T")][0].toUpperCase();
+    }
+
+    function ago(time) {
+      const mins = Math.max(0, Math.floor((Date.now() - time) / 60000));
+      if (mins < 1) return "Baru saja";
+      if (mins < 60) return mins + " menit lalu";
+      if (mins < 1440) return Math.floor(mins / 60) + " jam lalu";
+      return Math.floor(mins / 1440) + " hari lalu";
+    }
+
+    function renderPost(post) {
+      const liked = post.likes.includes(state.name);
+      const isMine = post.author === state.name;
+      const comments = post.comments || [];
+      const expanded = openComments.has(post.id);
+
+      return `
+        <article class="card">
+          <div class="post-head">
+            <div class="avatar">${escapeHTML(initials(post.author))}</div>
+            <div class="grow">
+              <strong>${escapeHTML(post.author)}</strong>
+              <div class="muted">${ago(post.time)}</div>
+            </div>
+            ${isMine ? `<button class="action" data-delete="${escapeHTML(post.id)}" aria-label="Hapus postingan">Hapus</button>` : ""}
+          </div>
+          <div class="post-text">${escapeHTML(post.text)}</div>
+          <div class="post-actions">
+            <button class="action ${liked ? "selected" : ""}" data-like="${escapeHTML(post.id)}">${liked ? "♥" : "♡"} ${post.likes.length} Like</button>
+            <button class="action ${expanded ? "selected" : ""}" data-comments="${escapeHTML(post.id)}">☰ ${comments.length} Komentar</button>
+            <button class="action ${post.saved ? "selected" : ""}" data-save="${escapeHTML(post.id)}">${post.saved ? "🔖 Tersimpan" : "♧ Simpan"}</button>
+          </div>
+          ${expanded ? `
+            <div class="comments">
+              ${comments.length ? comments.map(c => `
+                <div class="comment">
+                  <strong>${escapeHTML(c.author)}</strong>
+                  <span class="muted">${ago(c.time)}</span>
+                  <div>${escapeHTML(c.text)}</div>
+                </div>`).join("") : '<div class="muted">Belum ada komentar.</div>'}
+              <form class="comment-form" data-comment-form="${escapeHTML(post.id)}">
+                <input class="field" name="comment" maxlength="500" required placeholder="Tulis komentar..." aria-label="Komentar">
+                <button class="btn" type="submit">Kirim</button>
+              </form>
+            </div>` : ""}
+        </article>`;
+    }
+
+    function render() {
+      document.body.classList.toggle("dark", !!state.dark);
+      $("themeBtn").textContent = state.dark ? "☀" : "☾";
+      $("helloName").textContent = state.name;
+      $("composeName").textContent = state.name;
+      $("composeAvatar").textContent = initials(state.name);
+      $("profileAvatar").textContent = initials(state.name);
+      $("profileName").textContent = state.name;
+      $("nameInput").value = state.name;
+
+      const query = $("searchInput").value.trim().toLowerCase();
+      const matching = state.posts.filter(p =>
+        (p.text + " " + p.author).toLowerCase().includes(query)
+      );
+
+      $("feed").innerHTML = matching.length
+        ? matching.map(renderPost).join("")
+        : '<div class="card empty">Tidak ada postingan yang cocok.</div>';
+
+      const saved = state.posts.filter(p => p.saved);
+      $("savedFeed").innerHTML = saved.length
+        ? saved.map(renderPost).join("")
+        : '<div class="card empty">Belum ada postingan tersimpan.</div>';
+
+      $("postCount").textContent = matching.length + " postingan";
+      $("myPosts").textContent = state.posts.filter(p => p.author === state.name).length;
+      $("myLikes").textContent = state.posts
+        .filter(p => p.author === state.name)
+        .reduce((sum, p) => sum + p.likes.length, 0);
+      $("mySaved").textContent = saved.length;
+      $("networkStatus").textContent = navigator.onLine
+        ? "● Terhubung ke internet" : "● Sedang offline";
+      $("cacheStatus").textContent = "Penyimpanan lokal aktif pada perangkat ini.";
+    }
+
+    function showPage(page) {
+      document.querySelectorAll(".page").forEach(el =>
+        el.classList.toggle("active", el.id === page)
+      );
+      document.querySelectorAll(".navbtn").forEach(btn =>
+        btn.classList.toggle("active", btn.dataset.page === page)
+      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    $("publishBtn").addEventListener("click", () => {
+      const text = $("postInput").value.trim();
+      if (!text) return alert("Tulis sesuatu terlebih dahulu.");
+      state.posts.unshift({
+        id: "p-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+        author: state.name,
+        text,
+        time: Date.now(),
+        likes: [],
+        saved: false,
+        comments: []
+      });
+      $("postInput").value = "";
+      $("charCount").textContent = "0";
+      persist();
+      render();
+    });
+
+    $("postInput").addEventListener("input", () => {
+      $("charCount").textContent = $("postInput").value.length;
+    });
+    $("searchInput").addEventListener("input", render);
+
+    $("saveNameBtn").addEventListener("click", () => {
+      const name = $("nameInput").value.trim();
+      if (!name) return alert("Nama tidak boleh kosong.");
+      if (name.length > 30) return alert("Nama maksimal 30 karakter.");
+      const oldName = state.name;
+      state.posts.forEach(p => {
+        if (p.author === oldName) p.author = name;
+        p.likes = p.likes.map(n => n === oldName ? name : n);
+        (p.comments || []).forEach(c => {
+          if (c.author === oldName) c.author = name;
+        });
+      });
+      state.name = name;
+      persist();
+      render();
+      alert("Nama tampilan berhasil disimpan di perangkat ini.");
+    });
+
+    $("themeBtn").addEventListener("click", () => {
+      state.dark = !state.dark;
+      persist();
+      render();
+    });
+
+    document.querySelector(".bottomnav").addEventListener("click", e => {
+      const btn = e.target.closest("[data-page]");
+      if (btn) showPage(btn.dataset.page);
+    });
+
+    document.addEventListener("click", e => {
+      const likeBtn = e.target.closest("[data-like]");
+      const saveBtn = e.target.closest("[data-save]");
+      const commentBtn = e.target.closest("[data-comments]");
+      const deleteBtn = e.target.closest("[data-delete]");
+
+      if (likeBtn) {
+        const p = state.posts.find(p => p.id === likeBtn.dataset.like);
+        if (!p) return;
+        const i = p.likes.indexOf(state.name);
+        if (i >= 0) p.likes.splice(i, 1);
+        else p.likes.push(state.name);
+        persist(); render();
+      }
+
+      if (saveBtn) {
+        const p = state.posts.find(p => p.id === saveBtn.dataset.save);
+        if (!p) return;
+        p.saved = !p.saved;
+        persist(); render();
+      }
+
+      if (commentBtn) {
+        const id = commentBtn.dataset.comments;
+        openComments.has(id) ? openComments.delete(id) : openComments.add(id);
+        render();
+      }
+
+      if (deleteBtn) {
+        const p = state.posts.find(p => p.id === deleteBtn.dataset.delete);
+        if (!p || p.author !== state.name) {
+          return alert("Postingan ini tidak dapat dihapus dari profilmu.");
+        }
+        if (confirm("Hapus postingan ini dari perangkatmu?")) {
+          state.posts = state.posts.filter(p => p.id !== deleteBtn.dataset.delete);
+          persist(); render();
+        }
+      }
+    });
+
+    document.addEventListener("submit", e => {
+      const form = e.target.closest("[data-comment-form]");
+      if (!form) return;
+      e.preventDefault();
+      const input = form.elements.comment;
+      const text = input.value.trim();
+      if (!text) return;
+      const p = state.posts.find(p => p.id === form.dataset.commentForm);
+      if (!p) return;
+      p.comments = p.comments || [];
+      p.comments.push({ author: state.name, text, time: Date.now() });
+     
