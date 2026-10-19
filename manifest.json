@@ -1,0 +1,22 @@
+
+{
+  "id": "./",
+  "name": "Jumao Community",
+  "short_name": "Jumao",
+  "description": "Ruang berbagi dan berdiskusi bersama.",
+  "lang": "id",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
